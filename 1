@@ -1,0 +1,67 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <cstdlib>
+#include <ctime>
+#include <string>
+#include <climits> // For std::numeric_limits
+
+#ifdef _WIN32
+#include <conio.h> // For _getch() on Windows
+#else
+// 替换_getch()的跨平台实现，如果可用
+#endif
+
+// 函数声明，告诉编译器函数的存在和它的接口
+void drawLottery();
+
+int main() {
+    // 初始化名字列表
+    std::vector<std::string> names = {
+        "白塔77", "苞米蛙", "场控梓贤0814", "橙子", "辞去一身温柔", "怀念最初", "猛扣瞎子那只好眼", "六九.", "Monster.",
+        "年糕ng", "爬视角", "尸体", "魏无语", "我纯变态", "油炸鸡米花", "主播", "月亮", "cjb"
+    };
+
+    // 设置随机数种子
+    std::srand(std::time(nullptr));
+
+    // 主循环，持续检测隐藏命令和进行抽奖
+    while (true) {
+        // 清除之前可能残留的字符
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        // 等待用户输入隐藏命令，但不显示到控制台
+        char hiddenCommand[4]; // 假设命令不会超过3个字符加一个结束符
+        for (int i = 0; i < 3; ++i) {
+            hiddenCommand[i] = _getch(); // 读取每个字符但不回显
+            if (hiddenCommand[i] == 'c' && i == 0) {
+                // 用户开始输入命令，清空缓冲区并等待剩余部分
+                std::cout << "\n"; // 换行（可选）
+                for (int j = 0; j < i; ++j) {
+                    hiddenCommand[j] = '\0'; // 在当前位置置空字符串
+                }
+                break; // 从循环开始处重新开始以捕获命令的剩余部分
+            }
+        }
+        hiddenCommand[3] = '\0'; // 置空字符串
+
+        // 检查是否输入了隐藏命令
+        if (std::string(hiddenCommand) == "czb") {
+            // 用户输入了隐藏命令czb，重置程序
+            names.clear(); // 清空名单
+            std::cout << "程序已重置，名单已清空。" << std::endl;
+            continue; // 重置后继续循环等待下一个操作
+        }
+
+        // 如果没有输入隐藏命令，则进行抽奖
+        drawLottery();
+
+        // 提示用户等待下一次抽奖或输入隐藏命令
+        std::cout << "按任意键继续抽奖或输入'czb'重置程序..." << std::endl;
+        _getch(); // 等待用户输入任意键
+    }
+
+    // 程序结束
+    return 0;
+}
+
